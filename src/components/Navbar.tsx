@@ -6,6 +6,8 @@ import { useRole } from "@/context/RoleContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import CommandPalette from "./CommandPalette";
+import ThemeToggle from "./ThemeToggle";
+
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
@@ -50,7 +52,8 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
           <button className="p-3 hover:bg-white/10 rounded-2xl transition-all relative group border border-transparent hover:border-white/10">
             <Bell className="w-5 h-5 text-slate-400 group-hover:text-white glow-primary" />
             <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-indigo-500 rounded-full border-[3px] border-background animate-pulse shadow-[0_0_10px_#6366f1]"></span>

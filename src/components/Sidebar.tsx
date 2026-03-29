@@ -8,38 +8,28 @@ import {
   ClipboardCheck, 
   Settings, 
   GraduationCap, 
-  LogOut, 
   ChevronRight, 
-  Home, 
   Calendar, 
-  MessageSquare,
-  Search,
-  Moon,
-  Sun,
-  Bell,
-  Zap,
-  Command,
-  HelpCircle,
-  FileText,
-  Activity,
-  Award,
-  Layers,
-  Building,
-  Edit,
-  BarChart3,
-  User,
-  MoreVertical
+  Zap, 
+  Command, 
+  Activity, 
+  Award, 
+  Layers, 
+  Building, 
+  Edit, 
+  BarChart3, 
+  User, 
+  MoreVertical,
+  Bell
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "@/context/ThemeContext";
 import { useRole } from "@/context/RoleContext";
 import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
   const { role } = useRole();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -216,15 +206,6 @@ const Sidebar = () => {
         )}
 
         <div className={`flex items-center ${isCollapsed ? 'flex-col gap-4' : 'justify-between px-2'} gap-2`}>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={toggleTheme}
-            className="p-3 rounded-xl hover:bg-white/5 transition-colors relative"
-          >
-            {theme === "light" ? <Moon className="w-5 h-5 text-indigo-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
-          </motion.button>
-          
           <motion.button
             whileHover={{ scale: 1.1, rotate: 45 }}
             whileTap={{ scale: 0.9 }}

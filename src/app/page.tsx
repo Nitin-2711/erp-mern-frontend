@@ -21,7 +21,10 @@ import {
   Zap,
   Shield,
   Layers,
-  BarChart3
+  BarChart3,
+  CreditCard,
+  Target,
+  FileCheck
 } from "lucide-react";
 import { useRole } from "@/context/RoleContext";
 
@@ -60,176 +63,242 @@ const Sparkline = ({ color }: { color: string }) => (
         strokeWidth="3"
         strokeLinecap="round"
       />
-      <motion.path
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.15 }}
-        transition={{ duration: 2 }}
-        d="M0 35 Q 20 5, 40 25 T 80 15 T 100 30 L 100 40 L 0 40 Z"
-        fill={color}
-      />
     </svg>
   </div>
 );
 
-const StatCard = ({ title, value, change, icon: Icon, color, glow }: any) => (
+const GlassCard = ({ children, className }: any) => (
   <motion.div
     variants={item}
-    whileHover={{ y: -10, rotateX: 5, rotateY: -5 }}
-    className="relative p-8 rounded-[2.5rem] glass-panel border-white/5 group perspective-1000 cursor-pointer overflow-hidden"
+    whileHover={{ y: -6, transition: { type: "spring", stiffness: 300 } }}
+    className={`glass-panel rounded-3xl p-8 relative overflow-hidden group ${className}`}
   >
-    <div className={`absolute -right-10 -top-10 w-40 h-40 rounded-full opacity-10 blur-3xl transition-all group-hover:opacity-20 ${glow}`} />
-    
-    <div className="flex justify-between items-start">
-      <div className={`p-4 rounded-2xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform`}>
-        <Icon className={`w-7 h-7 ${color}`} />
-      </div>
-      <div className="text-right">
-        <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">{change}</span>
-      </div>
-    </div>
-
-    <div className="mt-8">
-      <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">{title}</p>
-      <h3 className="text-4xl font-black tracking-tighter mt-1 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-        {value}
-      </h3>
-    </div>
-
-    <Sparkline color={color.includes("indigo") ? "#6366f1" : color.includes("emerald") ? "#10b981" : "#f59e0b"} />
+    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+    {children}
   </motion.div>
 );
 
-// --- Dashboard Sub-Views ---
+// --- Module Components ---
 
-const AdminDashboard = () => (
-  <motion.div variants={container} initial="hidden" animate="show" className="space-y-12">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <StatCard title="System Revenue" value="$2.8M" change="+14.2%" icon={Wallet} color="text-indigo-400" glow="bg-indigo-500" />
-      <StatCard title="Active Nodes" value="12.4k" change="+5.8%" icon={Zap} color="text-amber-400" glow="bg-amber-500" />
-      <StatCard title="Security Score" value="98/100" change="Stable" icon={Shield} color="text-emerald-400" glow="bg-emerald-500" />
-      <StatCard title="Data Flow" value="4.2TB" change="+22.1%" icon={Layers} color="text-cyan-400" glow="bg-cyan-500" />
+const AttendanceRing = ({ percentage }: { percentage: number }) => (
+  <div className="relative w-40 h-40 group cursor-pointer">
+    <svg className="w-full h-full rotate-[-90deg]">
+      <circle cx="80" cy="80" r="70" className="stroke-primary-start/10 fill-none" strokeWidth="8" />
+      <motion.circle 
+        cx="80" cy="80" r="70" 
+        className="stroke-primary-start fill-none" 
+        strokeWidth="10" 
+        strokeDasharray="440" 
+        initial={{ strokeDashoffset: 440 }}
+        animate={{ strokeDashoffset: 440 - (440 * percentage) / 100 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        strokeLinecap="round"
+        style={{ filter: "drop-shadow(0 0 12px rgba(59, 130, 246, 0.4))" }}
+      />
+    </svg>
+    <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <span className="text-4xl font-black tracking-tighter group-hover:scale-110 transition-transform">{percentage}%</span>
+      <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Presence Ratio</span>
     </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-      <motion.div variants={item} className="lg:col-span-2 rounded-[3rem] glass-panel p-10 relative overflow-hidden">
-        <div className="flex justify-between items-center mb-12">
-          <div>
-            <h3 className="text-2xl font-black tracking-tight flex items-center gap-3">
-              <BarChart3 className="w-6 h-6 text-indigo-400" /> Network Expansion
-            </h3>
-            <p className="text-slate-500 text-sm font-bold mt-1 uppercase tracking-widest opacity-60">Global enrollment & resource metrics</p>
-          </div>
-          <div className="flex gap-2">
-            {['24H', '7D', '30D'].map(t => (
-              <button key={t} className={`px-4 py-2 rounded-xl text-[10px] font-black transition-all ${t === '7D' ? 'bg-indigo-600' : 'bg-white/5 hover:bg-white/10'}`}>{t}</button>
-            ))}
-          </div>
-        </div>
-
-        <div className="h-80 flex items-end gap-4 px-4 overflow-visible">
-          {[60, 45, 80, 55, 95, 75, 40, 85, 65, 50, 90, 70].map((h, i) => (
-            <div key={i} className="flex-1 group relative flex flex-col items-center gap-4 justify-end h-full">
-              <motion.div 
-                initial={{ height: 0 }} 
-                animate={{ height: `${h}%` }} 
-                transition={{ delay: i * 0.05, type: "spring" }}
-                className="w-full bg-gradient-to-t from-indigo-500/10 via-indigo-500/30 to-indigo-500 rounded-2xl relative group-hover:glow-primary transition-all duration-500"
-              >
-                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-              </motion.div>
-              <span className="text-[10px] font-black text-slate-600 group-hover:text-indigo-400 transition-colors">
-                {['M','T','W','T','F','S','S','M','T','W','T','F'][i]}
-              </span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div variants={item} className="rounded-[3rem] glass-panel p-10">
-        <h3 className="text-xl font-black tracking-tight mb-10">Recent Pulse</h3>
-        <div className="space-y-8">
-          {[
-            { label: "Kernel Update", time: "2m ago", color: "bg-indigo-500" },
-            { label: "New Node Auth", time: "15m ago", color: "bg-emerald-500" },
-            { label: "System Sync", time: "1h ago", color: "bg-cyan-500" },
-            { label: "Security Audit", time: "3h ago", color: "bg-amber-500" },
-          ].map((activity, i) => (
-            <div key={i} className="flex items-center gap-6 group cursor-pointer">
-              <div className={`w-3 h-3 rounded-full ${activity.color} shadow-[0_0_10px_currentColor] group-hover:scale-150 transition-transform`}></div>
-              <div className="flex-1">
-                <p className="text-[13px] font-bold text-white group-hover:text-indigo-400 transition-colors uppercase tracking-tight">{activity.label}</p>
-                <p className="text-[10px] font-black text-slate-500 uppercase mt-1 opacity-60 tracking-widest">{activity.time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button className="w-full mt-12 py-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-[11px] font-black uppercase tracking-widest text-slate-400 transition-all">Full System Log</button>
-      </motion.div>
-    </div>
-  </motion.div>
+  </div>
 );
+
+const FeeStatusCard = () => (
+  <GlassCard className="bg-gradient-to-br from-blue-500/5 to-transparent border-blue-500/10 hover:border-blue-500/20">
+    <div className="flex justify-between items-start mb-10">
+      <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/10">
+        <CreditCard className="w-7 h-7 text-blue-500" />
+      </div>
+      <span className="px-3 py-1 bg-amber-500/10 text-amber-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-amber-500/10">Due in 5 Days</span>
+    </div>
+    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Total Outstanding</p>
+    <h3 className="text-4xl font-black tracking-tighter mt-1">$1,240.00</h3>
+    <div className="mt-8 flex gap-3">
+      <button className="flex-1 py-4 bg-primary-start text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95">Pay Now</button>
+      <button className="p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all">
+        <MoreHorizontal className="w-5 h-5 text-slate-400" />
+      </button>
+    </div>
+  </GlassCard>
+);
+
+
+// --- Main Dashboards ---
 
 const StudentDashboard = () => (
-  <motion.div variants={container} initial="hidden" animate="show" className="space-y-12">
+  <motion.div variants={container} initial="hidden" animate="show" className="space-y-10">
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-      <motion.div variants={item} className="lg:col-span-2 rounded-[3rem] bg-gradient-to-br from-[#1E293B] to-[#0F172A] p-10 border border-white/5 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-          <GraduationCap className="w-64 h-64" />
-        </div>
-        <div className="relative z-10 flex flex-col h-full justify-between">
-          <div>
-            <span className="text-[11px] font-black text-indigo-400 uppercase tracking-[.4em]">Academic Year Sync</span>
-            <h3 className="text-5xl font-black tracking-tighter mt-4 leading-tight">Quantum Physics<br/>Midterms in <span className="text-indigo-500">4 Days</span></h3>
+      {/* Attendance & Stats Core */}
+      <GlassCard className="flex flex-col items-center justify-center text-center">
+        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-10">Neural Presence Shard</h3>
+        <AttendanceRing percentage={88.4} />
+        <div className="mt-10 grid grid-cols-2 gap-6 w-full px-4 border-t border-white/5 pt-10">
+          <div className="text-left">
+            <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full inline-block mb-3">Verified</p>
+            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Identity Cycles</p>
+            <p className="text-2xl font-black mt-1 tracking-tighter">142</p>
           </div>
-          <div className="mt-20 flex gap-4">
-            <button className="px-8 py-4 bg-indigo-600 rounded-[1.5rem] font-black text-sm uppercase tracking-tighter hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/30">View Study Plan</button>
-            <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-[1.5rem] font-black text-sm uppercase tracking-tighter hover:bg-white/10 transition-all">Course Vault</button>
+          <div className="text-left">
+            <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full inline-block mb-3">Deficient</p>
+            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Coherence Loss</p>
+            <p className="text-2xl font-black mt-1 tracking-tighter text-rose-500 line-through decoration-rose-500/20">04</p>
           </div>
         </div>
-      </motion.div>
+      </GlassCard>
 
-      <motion.div variants={item} className="rounded-[3rem] glass-panel p-10 flex flex-col items-center justify-center text-center">
-        <div className="relative w-48 h-48 mb-6">
-          <svg className="w-full h-full rotate-[-90deg]">
-            <circle cx="96" cy="96" r="80" className="stroke-white/5 fill-none" strokeWidth="12" />
-            <motion.circle 
-              cx="96" cy="96" r="80" 
-              className="stroke-indigo-500 fill-none" 
-              strokeWidth="12" 
-              strokeDasharray="502" 
-              initial={{ strokeDashoffset: 502 }}
-              animate={{ strokeDashoffset: 502 - (502 * 0.85) }}
-              transition={{ duration: 2, ease: "easeOut" }}
-              strokeLinecap="round"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-4xl font-black tracking-tighter">85%</span>
-            <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">Attendance</span>
+      {/* Main Focus Hub */}
+      <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-10">
+        <FeeStatusCard />
+        <GlassCard>
+          <div className="flex justify-between items-center mb-10">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+              <TrendingUp className="w-7 h-7 text-emerald-500" />
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[.2em]">Current CGPA</p>
+              <h4 className="text-3xl font-black tracking-tighter">9.24</h4>
+            </div>
           </div>
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Performance Alpha</p>
+          <div className="space-y-4 mt-6">
+            {[
+              { label: "Internal Assessments", val: 94 },
+              { label: "Lab Performance", val: 82 },
+            ].map((p, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-[10px] font-black uppercase mb-1.5 opacity-60">
+                  <span>{p.label}</span>
+                  <span>{p.val}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${p.val}%` }} className="h-full bg-indigo-500 rounded-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+
+    {/* Secondary Matrix */}
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
+      <div className="xl:col-span-2 space-y-10">
+        <GlassCard>
+          <h3 className="text-xl font-black tracking-tight mb-8 flex items-center gap-3">
+            <Calendar className="w-6 h-6 text-primary-end" /> Weekly Sequence
+          </h3>
+          <div className="grid grid-cols-5 gap-4">
+            {['MON', 'TUE', 'WED', 'THU', 'FRI'].map((day, i) => (
+              <div key={day} className={`p-4 rounded-3xl text-center transition-all cursor-pointer ${i === 0 ? "bg-primary-start/20 border border-primary-start/30" : "bg-white/5 border border-transparent hover:border-white/10"}`}>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{day}</p>
+                <p className="text-sm font-black mt-2">4 Classes</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 space-y-4">
+             {[
+               { time: "09:00 - 10:30", subject: "Quantum Computing Hub", room: "Cluster 4", active: true },
+               { time: "11:00 - 12:30", subject: "Applied Neural Networks", room: "Lab A2", active: false },
+             ].map((cls, i) => (
+               <div key={i} className={`flex items-center justify-between p-6 rounded-[1.8rem] transition-all ${cls.active ? "bg-white/10 border border-white/10 scale-[1.02]" : "bg-white/[0.02] opacity-50"}`}>
+                 <div className="flex items-center gap-6">
+                    <span className="text-[10px] font-black text-primary-end">{cls.time}</span>
+                    <div>
+                      <h5 className="font-black uppercase tracking-tight text-sm">{cls.subject}</h5>
+                      <p className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-widest leading-none">{cls.room}</p>
+                    </div>
+                 </div>
+                 {cls.active && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse"></div>}
+               </div>
+             ))}
+          </div>
+        </GlassCard>
+      </div>
+
+      <GlassCard className="h-full">
+        <h3 className="text-xl font-black tracking-tight mb-8 flex items-center gap-3">
+          <Bell className="w-6 h-6 text-amber-500" /> Notifications
+        </h3>
+        <div className="space-y-6">
+          {[
+            { tag: "EXAM", msg: "Mid-semester verification portal is now active.", time: "12m ago", color: "text-amber-500" },
+            { tag: "FEE", msg: "Hostel fee payment window closes on April 4th.", time: "2h ago", color: "text-rose-500" },
+            { tag: "EVENT", msg: "Annual Tech Symposium registration started.", time: "5h ago", color: "text-cyan-500" },
+            { tag: "LIBRARY", msg: "New AI Research journals added to digital shelf.", time: "1d ago", color: "text-emerald-500" },
+          ].map((notice, i) => (
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1 + i * 0.1 }}
+              className="group cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-[9px] font-black uppercase tracking-[.2em] ${notice.color}`}>{notice.tag}</span>
+                <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{notice.time}</span>
+              </div>
+              <p className="text-[13px] font-bold text-slate-300 group-hover:text-white transition-colors leading-relaxed">
+                {notice.msg}
+              </p>
+              <div className="mt-4 h-[1px] w-full bg-white/5" />
+            </motion.div>
+          ))}
         </div>
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">System status: All credits active.<br/>Next class: Physics Lab @ 2PM</p>
-      </motion.div>
+        <button className="w-full mt-8 py-3 rounded-xl border border-dashed border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:border-white/20 hover:text-slate-400 transition-all">Archive Access</button>
+      </GlassCard>
+    </div>
+  </motion.div>
+);
+
+const AdminDashboardTeaser = () => (
+  <motion.div variants={container} initial="hidden" animate="show" className="space-y-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[
+        { title: "System Revenue", value: "$2.8M", icon: Wallet, color: "text-indigo-400" },
+        { title: "Global Students", value: "12,450", icon: Users, color: "text-emerald-400" },
+        { title: "Network Status", value: "99.9%", icon: Activity, color: "text-cyan-400" },
+        { title: "Security Node", value: "ACTIVE", icon: Shield, color: "text-rose-400" },
+      ].map((card, i) => (
+        <GlassCard key={i} className="hover:bg-white/5">
+           <div className={`w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10 ${card.color}`}>
+             <card.icon className="w-6 h-6" />
+           </div>
+           <p className="text-[11px] font-black text-slate-500 uppercase tracking-[.3em]">{card.title}</p>
+           <h4 className="text-3xl font-black tracking-tighter mt-1">{card.value}</h4>
+           <Sparkline color={card.color.includes("indigo") ? "#6366f1" : card.color.includes("emerald") ? "#10b981" : "#06b6d4"} />
+        </GlassCard>
+      ))}
     </div>
     
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {[
-        { title: "Course Credits", value: "24/30", icon: BookOpen, color: "text-indigo-400" },
-        { title: "Global Rank", value: "#12", icon: TrendingUp, color: "text-emerald-400" },
-        { title: "Tasks Due", value: "04", icon: Clock, color: "text-amber-400" },
-      ].map((card, i) => (
-        <motion.div key={i} variants={item} className="p-8 rounded-[2rem] glass-panel group hover:bg-white/5 transition-all cursor-pointer border-white/5">
-          <div className="flex items-center gap-6">
-            <div className={`p-4 rounded-2xl bg-white/5 ${card.color}`}>
-              <card.icon className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{card.title}</p>
-              <p className="text-2xl font-black text-white mt-1 uppercase tracking-tight">{card.value}</p>
-            </div>
-          </div>
-        </motion.div>
-      ))}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <GlassCard className="h-96">
+        <h3 className="text-xl font-black tracking-tight mb-10 flex items-center gap-3">
+          <BarChart3 className="w-6 h-6 text-primary-start" /> Enterprise Core
+        </h3>
+        <div className="h-full flex items-end gap-3 px-2 pb-10">
+          {[40, 65, 45, 90, 65, 85, 30, 95, 75, 55, 80, 60].map((h, i) => (
+            <motion.div 
+               key={i} 
+               initial={{ height: 0 }} 
+               animate={{ height: `${h}%` }} 
+               className="flex-1 bg-primary-start/20 hover:bg-primary-start/40 rounded-t-xl transition-all"
+            />
+          ))}
+        </div>
+      </GlassCard>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <GlassCard className="bg-indigo-600/10 border-indigo-600/20">
+          <Zap className="w-8 h-8 text-indigo-400 mb-6" />
+          <h4 className="text-xl font-black tracking-tight">System<br/>Overload Warning</h4>
+          <p className="text-xs font-bold text-slate-400 mt-4 leading-relaxed lowercase tracking-tight">Registration portal handling 8k req/sec.</p>
+        </GlassCard>
+        <GlassCard className="bg-emerald-600/10 border-emerald-600/20">
+          <CheckCircle2 className="w-8 h-8 text-emerald-400 mb-6" />
+          <h4 className="text-xl font-black tracking-tight">Audit Log<br/>Verified</h4>
+          <p className="text-xs font-bold text-slate-400 mt-4 leading-relaxed lowercase tracking-tight">All transaction nodes are consistent.</p>
+        </GlassCard>
+      </div>
     </div>
   </motion.div>
 );
@@ -241,39 +310,44 @@ export default function Home() {
 
   return (
     <div className="space-y-16 pb-24">
-      {/* Dynamic Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-10">
+      {/* Universal Hub Header */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-10 px-4">
         <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1] animate-pulse"></div>
-            <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.5em]">Nexus Core Synchronized</span>
+            <div className={`w-2.5 h-2.5 rounded-full ${role === 'admin' ? 'bg-indigo-500 shadow-[0_0_12px_#6366f1]' : 'bg-cyan-500 shadow-[0_0_12px_#06b6d4]'} animate-pulse`}></div>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em]">{role} Node Access Synchronized</span>
           </div>
           <h2 className="text-6xl font-black tracking-tighter leading-tight">
-            Quantum <span className="bg-gradient-to-r from-indigo-400 to-purple-600 bg-clip-text text-transparent">Operations</span>
+            Quantum <span className="gradient-text-master">Perspective</span>
           </h2>
           <p className="text-slate-500 mt-4 text-xl font-medium max-w-2xl leading-relaxed italic opacity-80">
-            Welcome to the zero-lag enterprise grid. Managing your {role} assets with ultimate precision.
+            Welcome to India's most advanced university grid. Accessing <span className="font-bold underline decoration-primary-start decoration-2 underline-offset-4">{role}</span> dashboard protocols.
           </p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex gap-4">
-          <div className="p-6 rounded-[2rem] glass-panel flex flex-col items-center justify-center border-white/10 group hover:border-indigo-500/50 transition-all cursor-pointer">
-            <Calendar className="w-6 h-6 text-slate-400 group-hover:text-indigo-400 transition-colors" />
-            <span className="text-[10px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Schedule</span>
-          </div>
-          <div className="p-6 rounded-[2rem] bg-indigo-600 shadow-2xl shadow-indigo-500/40 flex flex-col items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer">
-            <Plus className="w-6 h-6 text-white" />
-            <span className="text-[10px] font-black text-white mt-2 uppercase tracking-widest">Action</span>
-          </div>
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex gap-5">
+           <GlassCard className="p-6 !rounded-[2rem] hover:!bg-white/5 cursor-pointer flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-slate-400" />
+           </GlassCard>
+           <button className="px-10 py-5 bg-primary-start rounded-[2rem] font-black text-sm uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-blue-500/30 text-white">
+              Nexus Action
+           </button>
         </motion.div>
       </header>
 
-      {/* View Matrix */}
+      {/* Role-Based Matrix Swapper */}
       <AnimatePresence mode="wait">
-        <motion.div key={role} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -40 }} transition={{ duration: 0.6 }}>
-          {role === "admin" ? <AdminDashboard /> : <StudentDashboard />}
+        <motion.div 
+          key={role} 
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }} 
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
+          exit={{ opacity: 0, y: -40, filter: "blur(10px)" }} 
+          transition={{ duration: 0.6, type: "spring", damping: 20 }}
+        >
+          {role === "admin" ? <AdminDashboardTeaser /> : <StudentDashboard />}
         </motion.div>
       </AnimatePresence>
     </div>
   );
 }
+

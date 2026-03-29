@@ -16,95 +16,99 @@ import {
   Search,
   Moon,
   Sun,
-  Bell
+  Bell,
+  Zap,
+  Command,
+  HelpCircle,
+  FileText,
+  Activity,
+  Award,
+  Layers,
+  Building,
+  Edit,
+  BarChart3,
+  User
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
-import { useRole, Role } from "@/context/RoleContext";
+import { useRole } from "@/context/RoleContext";
 import { useState } from "react";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { role, setRole } = useRole();
+  const { role } = useRole();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navigation = {
     admin: [
-      { name: "Overview", icon: LayoutDashboard, path: "/" },
-      { name: "Departments", icon: Home, path: "/departments" },
-      { name: "Revenue", icon: CreditCard, path: "/revenue" },
-      { name: "System Logs", icon: ClipboardCheck, path: "/logs" },
+      { name: "Core Hub", icon: LayoutDashboard, path: "/" },
+      { name: "Academic Lattice", icon: Building, path: "/departments" },
+      { name: "Knowledge Index", icon: BookOpen, path: "/subjects" },
+      { name: "Identity Center", icon: Users, path: "/users" },
+      { name: "Profile Node", icon: User, path: "/profile" },
+      { name: "Strategic Hub", icon: BarChart3, path: "/reports" },
+      { name: "Global Finance", icon: CreditCard, path: "/revenue" },
     ],
     hod: [
-      { name: "Department", icon: LayoutDashboard, path: "/" },
-      { name: "Faculty", icon: GraduationCap, path: "/faculty" },
-      { name: "Students", icon: Users, path: "/students" },
-      { name: "Analytics", icon: BookOpen, path: "/analytics" },
+      { name: "Dept Hub", icon: LayoutDashboard, path: "/" },
+      { name: "Lattice Struct", icon: Building, path: "/departments" },
+      { name: "Strategic Hub", icon: BarChart3, path: "/reports" },
+      { name: "Faculty Registry", icon: GraduationCap, path: "/faculty" },
+      { name: "Student Grid", icon: Users, path: "/students" },
+      { name: "Profile Node", icon: User, path: "/profile" },
     ],
     faculty: [
-      { name: "My Classes", icon: LayoutDashboard, path: "/" },
-      { name: "Attendance", icon: ClipboardCheck, path: "/attendance" },
-      { name: "Uploads", icon: BookOpen, path: "/uploads" },
-      { name: "Messages", icon: MessageSquare, path: "/messages" },
+      { name: "Mission Hub", icon: LayoutDashboard, path: "/" },
+      { name: "Presence Registry", icon: ClipboardCheck, path: "/faculty/attendance" },
+      { name: "Marks Ledger", icon: Edit, path: "/marks" },
+      { name: "Knowledge Shards", icon: FileText, path: "/faculty/material" },
+      { name: "Profile Node", icon: User, path: "/profile" },
+      { name: "Neural Message", icon: MessageSquare, path: "/messages" },
     ],
     student: [
-      { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-      { name: "Timetable", icon: Calendar, path: "/timetable" },
-      { name: "Fees", icon: CreditCard, path: "/fees" },
-      { name: "Notices", icon: Bell, path: "/notices" },
+      { name: "Quantum Hub", icon: LayoutDashboard, path: "/" },
+      { name: "Temporal Grid", icon: Calendar, path: "/timetable" },
+      { name: "Presence Matrix", icon: ClipboardCheck, path: "/attendance" },
+      { name: "Profile Node", icon: User, path: "/profile" },
+      { name: "Finance Vault", icon: CreditCard, path: "/fees" },
+      { name: "Impact Log", icon: Award, path: "/results" },
     ]
   };
 
-  const menuItems = navigation[role] || navigation.admin;
+  const menuItems = navigation[role as keyof typeof navigation] || navigation.admin;
 
   return (
     <motion.aside
       initial={false}
       animate={{ 
-        width: isCollapsed ? "100px" : "300px",
+        width: isCollapsed ? "120px" : "340px",
         x: 0 
       }}
-      className="fixed left-6 top-6 bottom-6 glass-panel z-50 flex flex-col rounded-[2.5rem] border-white/10 shadow-2xl overflow-hidden"
+      className="fixed left-8 top-8 bottom-8 z-50 glass-panel !rounded-[3rem] border-white/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
     >
-      {/* Brand Section */}
-      <div className="flex items-center justify-between p-8">
-        <AnimatePresence mode="wait">
-          {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="flex items-center gap-4"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-start to-primary-end rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/40 relative group overflow-hidden">
-                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <GraduationCap className="text-white w-7 h-7 relative z-10" />
-              </div>
-              <div className="flex flex-col">
-                <h1 className="text-xl font-black tracking-tighter leading-none bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">NEXUS</h1>
-                <p className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.3em] mt-1.5 opacity-80">Quantum ERP</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/5"
-        >
-          <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
-            <ChevronRight className="w-5 h-5 text-slate-400" />
+      {/* Branding Node */}
+      <div className="p-10 flex items-center gap-5">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-start via-primary-middle to-primary-end p-[2px] shadow-2xl shadow-primary-start/40 flex-shrink-0 relative group overflow-hidden">
+           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+           <div className="w-full h-full bg-[#0A0F1F] rounded-[14px] flex items-center justify-center font-black text-xl text-white">
+            N
+          </div>
+        </div>
+        {!isCollapsed && (
+          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+             <h1 className="text-2xl font-black tracking-tighter text-white">NEXUS<span className="text-primary-middle">CORE</span></h1>
+             <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1.5 leading-none">Quantum ERP v2.0</p>
           </motion.div>
-        </button>
+        )}
       </div>
 
-      {/* Navigation Matrix */}
-      <nav className="flex-1 px-6 space-y-3 mt-4 overflow-y-auto no-scrollbar">
+      {/* Navigation Cluster */}
+      <nav className="flex-1 px-5 space-y-3 mt-4 overflow-y-auto no-scrollbar">
         {!isCollapsed && (
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-6 ml-3 opacity-50">Main Frequency</p>
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-6 ml-5 opacity-40">System Overlays</p>
         )}
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
@@ -114,55 +118,57 @@ const Sidebar = () => {
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-4 px-5 py-4 rounded-[1.5rem] transition-all duration-500 group relative overflow-hidden ${
+              className={`flex items-center gap-5 px-6 py-5 rounded-[2rem] transition-all duration-500 group relative overflow-hidden mb-1 ${
                 isActive
-                  ? "bg-white/10 text-white shadow-xl"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-white/5 text-white shadow-2xl shadow-black/20 border border-white/5"
+                  : "text-slate-500 hover:text-white hover:bg-white/[0.03]"
               }`}
             >
               {isActive && (
                 <motion.div 
-                  layoutId="active-bg"
-                  className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-transparent pointer-events-none"
+                  layoutId="active-nav-glow"
+                  className="absolute left-0 w-1.5 h-8 bg-indigo-500 rounded-r-full shadow-[0_0_15px_#6366f1]"
                 />
               )}
-              <Icon className={`w-5 h-5 min-w-[20px] transition-all duration-500 ${isActive ? "text-indigo-400 scale-110 glow-primary" : "group-hover:scale-110"}`} />
+              <Icon className={`w-6 h-6 min-w-[24px] transition-all duration-500 ${isActive ? "text-indigo-400 translate-x-1 glow-primary" : "group-hover:scale-110 group-hover:text-slate-300"}`} />
               {!isCollapsed && (
-                <span className={`font-bold text-[13px] tracking-wide transition-all ${isActive ? "translate-x-1" : "group-hover:translate-x-1"}`}>
+                <span className={`font-black text-[13px] tracking-tighter uppercase transition-all ${isActive ? "translate-x-1" : "group-hover:translate-x-1"}`}>
                   {item.name}
                 </span>
               )}
               {isActive && !isCollapsed && (
-                <motion.div
-                  layoutId="active-indicator"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-indigo-500 rounded-l-full shadow-[0_0_15px_#6366f1]"
-                />
+                 <div className="ml-auto w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1] animate-pulse" />
               )}
             </Link>
           );
         })}
       </nav>
 
-      {/* System Core */}
-      <div className="p-6 mt-auto border-t border-white/5 space-y-3">
+      {/* System Core Footer */}
+      <div className="p-8 mt-auto border-t border-white/5 space-y-4 bg-white/[0.01]">
         <button
           onClick={toggleTheme}
-          className="w-full flex items-center gap-4 px-5 py-4 rounded-[1.5rem] text-slate-400 hover:bg-white/5 hover:text-white transition-all group"
+          className="w-full flex items-center justify-center lg:justify-start gap-4 px-6 py-5 rounded-3xl text-slate-500 hover:bg-white/5 hover:text-white transition-all group border border-transparent hover:border-white/5"
         >
-          <div className="p-1 rounded-lg group-hover:bg-indigo-500/10 transition-colors">
-            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+          <div className="p-1 rounded-lg group-hover:rotate-12 transition-transform">
+            {theme === "light" ? <Moon className="w-6 h-6" /> : <Sun className="w-6 h-6 text-amber-500" />}
           </div>
-          {!isCollapsed && <span className="font-bold text-[13px] tracking-wide">{theme === "light" ? "Night Core" : "Light Aura"}</span>}
+          {!isCollapsed && <span className="font-black text-[11px] uppercase tracking-widest">{theme === "light" ? "Night Core" : "Light Aura"}</span>}
         </button>
         
-        {!isCollapsed && (
-          <div className="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 mt-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-[10px] font-black text-indigo-400">⌘K</div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Global Menu</p>
-            </div>
-          </div>
-        )}
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="w-full py-5 flex items-center justify-center gap-4 bg-white/5 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-white group"
+        >
+          {isCollapsed ? (
+            <Zap className="w-5 h-5 text-indigo-500 animate-pulse" />
+          ) : (
+            <>
+              <Command className="w-4 h-4 group-hover:rotate-180 transition-transform duration-700" />
+              <span>Toggle Interface</span>
+            </>
+          )}
+        </button>
       </div>
     </motion.aside>
   );

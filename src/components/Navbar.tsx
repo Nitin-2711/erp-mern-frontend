@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Search, User, Settings, LogOut, Moon, Sun, Monitor, Command } from "lucide-react";
+import { Bell, Search, User, Settings, LogOut, Moon, Sun, Monitor, Command, ChevronRight } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useRole } from "@/context/RoleContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,21 +32,22 @@ const Navbar = () => {
 
       {/* Action Center */}
       <div className="flex items-center gap-8">
-        {/* Role Quick Switch (Demo Elite) */}
-        <div className="hidden xl:flex items-center bg-white/5 p-1 rounded-2xl border border-white/5">
-          {["admin", "faculty", "student"].map((r) => (
-            <button
-              key={r}
-              onClick={() => setRole(r as any)}
-              className={`px-4 py-2 text-[11px] font-black uppercase tracking-tighter rounded-xl transition-all ${
-                role === r 
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" 
-                : "text-slate-500 hover:text-slate-300"
-              }`}
-            >
-              {r}
-            </button>
-          ))}
+        {/* Role Quick Switcher (Mandatory for Testing) */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-primary-start/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          <select 
+            value={role}
+            onChange={(e) => setRole(e.target.value as any)}
+            className="relative bg-white/5 border border-white/10 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-300 outline-none focus:border-primary-start/50 transition-all appearance-none cursor-pointer pr-10 hover:bg-white/10"
+          >
+            <option value="student">Student Node</option>
+            <option value="faculty">Faculty Node</option>
+            <option value="hod">HOD Supervisor</option>
+            <option value="admin">Admin Root</option>
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <ChevronRight className="w-4 h-4 text-slate-500 rotate-90" />
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -56,19 +57,22 @@ const Navbar = () => {
           </button>
         </div>
 
+        {/* Global Identity Dropdown */}
         <div className="h-10 w-[1px] bg-white/10 mx-2"></div>
 
-        {/* Global Identity Dropdown */}
         <div className="relative">
           <button 
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center gap-4 group"
           >
             <div className="text-right hidden lg:block">
-              <p className="text-[13px] font-black leading-none bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent group-hover:to-white transition-all">NITIN KUMAR</p>
-              <p className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.2em] mt-2 opacity-80">{role} NODE ACTIVE</p>
+              <p className="text-[13px] font-black leading-none bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent group-hover:to-white transition-all uppercase">Nitin Kumar</p>
+              <div className="flex items-center justify-end gap-2 mt-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse" />
+                 <p className="text-[9px] font-black text-primary-start uppercase tracking-[0.2em] opacity-80">{role} Badge</p>
+              </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[2px] shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-start to-primary-end p-[2px] shadow-lg shadow-primary-start/20 hover:scale-105 active:scale-95 transition-all">
               <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center font-black text-sm text-white">
                 NK
               </div>

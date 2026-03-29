@@ -48,34 +48,35 @@ const Sidebar = () => {
 
   const navigation = {
     admin: [
-      { name: "Core Hub", icon: LayoutDashboard, path: "/" },
-      { name: "Academic Lattice", icon: Building, path: "/departments" },
-      { name: "Knowledge Index", icon: BookOpen, path: "/subjects" },
-      { name: "Identity Center", icon: Users, path: "/users" },
+      { name: "Global Hub", icon: LayoutDashboard, path: "/" },
+      { name: "User Identities", icon: Users, path: "/users" },
+      { name: "Analytic Matrix", icon: BarChart3, path: "/reports" },
+      { name: "System Nodes", icon: Layers, path: "/system" },
+      { name: "Core Settings", icon: Settings, path: "/settings" },
       { name: "Profile Node", icon: User, path: "/profile" },
-      { name: "Strategic Hub", icon: BarChart3, path: "/reports" },
     ],
     hod: [
-      { name: "Dept Hub", icon: LayoutDashboard, path: "/" },
-      { name: "Lattice Struct", icon: Building, path: "/departments" },
+      { name: "Dept Overview", icon: LayoutDashboard, path: "/" },
+      { name: "Faculty Network", icon: Building, path: "/faculty" },
       { name: "Strategic Hub", icon: BarChart3, path: "/reports" },
-      { name: "Faculty Registry", icon: GraduationCap, path: "/faculty" },
-      { name: "Student Grid", icon: Users, path: "/students" },
-      { name: "Profile Node", icon: User, path: "/profile" },
+      { name: "Approvals Grid", icon: ClipboardCheck, path: "/approvals" },
+      { name: "Analytic Node", icon: Activity, path: "/analytics" },
     ],
     faculty: [
-      { name: "Mission Hub", icon: LayoutDashboard, path: "/" },
-      { name: "Presence Registry", icon: ClipboardCheck, path: "/faculty/attendance" },
-      { name: "Marks Ledger", icon: Edit, path: "/marks" },
-      { name: "Knowledge Shards", icon: FileText, path: "/faculty/material" },
-      { name: "Profile Node", icon: User, path: "/profile" },
+      { name: "Class Matrix", icon: LayoutDashboard, path: "/" },
+      { name: "Student Lattice", icon: Users, path: "/students" },
+      { name: "Attendance Log", icon: ClipboardCheck, path: "/faculty/attendance" },
+      { name: "Marks Depot", icon: Edit, path: "/marks" },
+      { name: "Notice Board", icon: Bell, path: "/notices" },
     ],
     student: [
       { name: "Quantum Hub", icon: LayoutDashboard, path: "/" },
-      { name: "Temporal Grid", icon: Calendar, path: "/timetable" },
-      { name: "Presence Matrix", icon: ClipboardCheck, path: "/attendance" },
       { name: "Profile Node", icon: User, path: "/profile" },
+      { name: "Subject Index", icon: BookOpen, path: "/subjects" },
+      { name: "Presence Ratio", icon: Activity, path: "/attendance" },
+      { name: "Impact Ledger", icon: Award, path: "/results" },
       { name: "Finance Vault", icon: CreditCard, path: "/fees" },
+      { name: "Notice Shards", icon: Zap, path: "/notices" },
     ]
   };
 

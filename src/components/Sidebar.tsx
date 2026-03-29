@@ -1,49 +1,126 @@
 "use client";
 
-import { Home, Users, BookOpen, CreditCard, ClipboardCheck, Settings, GraduationCap, LogOut, LayoutDashboard } from "lucide-react";
-import { motion } from "framer-motion";
+import { 
+  LayoutDashboard, 
+  Users, 
+  BookOpen, 
+  CreditCard, 
+  ClipboardCheck, 
+  Settings, 
+  GraduationCap, 
+  LogOut, 
+  ChevronRight, 
+  Home, 
+  Calendar, 
+  MessageSquare,
+  Search,
+  Moon,
+  Sun,
+  Bell
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext";
+import { useRole, Role } from "@/context/RoleContext";
+import { useState } from "react";
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
+  const { role, setRole } = useRole();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-    { name: "Students", icon: Users, path: "/students" },
-    { name: "Faculty", icon: GraduationCap, path: "/faculty" },
-    { name: "Courses", icon: BookOpen, path: "/courses" },
-    { name: "Finances", icon: CreditCard, path: "/finances" },
-    { name: "Exams", icon: ClipboardCheck, path: "/exams" },
-  ];
+  const navigation = {
+    admin: [
+      { name: "Overview", icon: LayoutDashboard, path: "/" },
+      { name: "Departments", icon: Home, path: "/departments" },
+      { name: "Revenue", icon: CreditCard, path: "/revenue" },
+      { name: "System Logs", icon: ClipboardCheck, path: "/logs" },
+    ],
+    hod: [
+      { name: "Department", icon: LayoutDashboard, path: "/" },
+      { name: "Faculty", icon: GraduationCap, path: "/faculty" },
+      { name: "Students", icon: Users, path: "/students" },
+      { name: "Analytics", icon: BookOpen, path: "/analytics" },
+    ],
+    faculty: [
+      { name: "My Classes", icon: LayoutDashboard, path: "/" },
+      { name: "Attendance", icon: ClipboardCheck, path: "/attendance" },
+      { name: "Uploads", icon: BookOpen, path: "/uploads" },
+      { name: "Messages", icon: MessageSquare, path: "/messages" },
+    ],
+    student: [
+      { name: "Dashboard", icon: LayoutDashboard, path: "/" },
+      { name: "Timetable", icon: Calendar, path: "/timetable" },
+      { name: "Fees", icon: CreditCard, path: "/fees" },
+      { name: "Notices", icon: Bell, path: "/notices" },
+    ]
+  };
 
-  const bottomItems = [
-    { name: "Settings", icon: Settings, path: "/settings" },
-    { name: "Logout", icon: LogOut, path: "/logout" },
-  ];
+  const menuItems = navigation[role] || navigation.admin;
 
   return (
     <motion.aside
-      initial={{ x: -280 }}
-      animate={{ x: 0 }}
-      transition={{ type: "spring", damping: 25, stiffness: 120 }}
-      className="fixed left-6 top-6 bottom-6 w-64 glass-panel z-50 flex flex-col p-6 rounded-[2.5rem] border-white/20 dark:border-white/5"
+      initial={false}
+      animate={{ width: isCollapsed ? "80px" : "280px" }}
+      className="fixed left-0 top-0 bottom-0 bg-card border-r border-border z-50 flex flex-col transition-colors duration-500 overflow-hidden"
     >
-      {/* Brand */}
-      <div className="flex items-center gap-3 mb-10 px-2 py-4">
-        <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/40 relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <GraduationCap className="text-white w-7 h-7 relative z-10" />
-        </div>
-        <div>
-          <h1 className="text-xl font-black tracking-tighter text-slate-900 dark:text-white leading-none">ERP <span className="text-indigo-600">PRO</span></h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Enterprise OS</p>
-        </div>
+      {/* Brand & Toggle */}
+      <div className="flex items-center justify-between p-6">
+        <AnimatePresence mode="wait">
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="flex items-center gap-3"
+            >
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                <GraduationCap className="text-white w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-lg font-black tracking-tighter leading-none">ERP PRO</h1>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">University OS</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-2 hover:bg-muted rounded-xl transition-colors"
+        >
+          <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
+            <ChevronRight className="w-5 h-5" />
+          </motion.div>
+        </button>
       </div>
 
-      {/* Main Nav */}
-      <nav className="flex-1 space-y-2 overflow-y-auto no-scrollbar">
-        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4 ml-2">CORE MODULES</p>
+      {/* Role Indicator (Quick Switch for Demo) */}
+      {!isCollapsed && (
+        <div className="px-6 mb-8">
+          <div className="p-1 px-1.5 bg-muted rounded-2xl flex gap-1">
+            {(["admin", "faculty", "student"] as Role[]).map((r) => (
+              <button
+                key={r}
+                onClick={() => setRole(r)}
+                className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-tighter rounded-xl transition-all ${
+                  role === r ? "bg-card shadow-sm text-primary" : "text-slate-400 hover:text-slate-600"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Navigation */}
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto no-scrollbar">
+        {!isCollapsed && (
+          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-4 ml-2">Navigation</p>
+        )}
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
           const Icon = item.icon;
@@ -52,18 +129,20 @@ const Sidebar = () => {
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group relative ${
                 isActive
-                  ? "nav-active text-white"
-                  : "text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  ? "nav-active"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-muted hover:text-primary"
               }`}
             >
-              <Icon className={`w-5 h-5 transition-all duration-500 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-12"}`} />
-              <span className="font-bold text-sm tracking-tight">{item.name}</span>
-              {isActive && (
+              <Icon className={`w-5 h-5 min-w-[20px] transition-all duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
+              {!isCollapsed && (
+                <span className="font-bold text-sm tracking-tight">{item.name}</span>
+              )}
+              {isActive && !isCollapsed && (
                 <motion.div
-                  layoutId="active-indicator"
-                  className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"
+                  layoutId="active-pill"
+                  className="absolute right-3 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_purple]"
                 />
               )}
             </Link>
@@ -71,27 +150,20 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* System & Support */}
-      <div className="mt-auto pt-6 border-t border-slate-200/50 dark:border-slate-800/50 space-y-1">
-        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4 ml-2">System</p>
-        {bottomItems.map((item) => {
-          const Icon = item.icon;
-          const isLogout = item.path === "/logout";
-          return (
-            <Link
-              key={item.name}
-              href={item.path}
-              className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group ${
-                isLogout 
-                ? "text-rose-500 hover:bg-rose-500/10" 
-                : "text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600"
-              }`}
-            >
-              <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="font-bold text-sm tracking-tight">{item.name}</span>
-            </Link>
-          );
-        })}
+      {/* Footer System Tools */}
+      <div className="p-4 mt-auto border-t border-border space-y-2">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-muted transition-all"
+        >
+          {theme === "light" ? <Moon className="w-5 h-5 min-w-[20px]" /> : <Sun className="w-5 h-5 min-w-[20px]" />}
+          {!isCollapsed && <span className="font-bold text-sm tracking-tight">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>}
+        </button>
+        
+        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-500 hover:bg-rose-500/10 transition-all">
+          <LogOut className="w-5 h-5 min-w-[20px]" />
+          {!isCollapsed && <span className="font-bold text-sm tracking-tight">Logout</span>}
+        </button>
       </div>
     </motion.aside>
   );

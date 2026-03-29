@@ -27,20 +27,24 @@ import {
   Building,
   Edit,
   BarChart3,
-  User
+  User,
+  MoreVertical
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import { useRole } from "@/context/RoleContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { role } = useRole();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const navigation = {
     admin: [
@@ -50,7 +54,6 @@ const Sidebar = () => {
       { name: "Identity Center", icon: Users, path: "/users" },
       { name: "Profile Node", icon: User, path: "/profile" },
       { name: "Strategic Hub", icon: BarChart3, path: "/reports" },
-      { name: "Global Finance", icon: CreditCard, path: "/revenue" },
     ],
     hod: [
       { name: "Dept Hub", icon: LayoutDashboard, path: "/" },
@@ -66,7 +69,6 @@ const Sidebar = () => {
       { name: "Marks Ledger", icon: Edit, path: "/marks" },
       { name: "Knowledge Shards", icon: FileText, path: "/faculty/material" },
       { name: "Profile Node", icon: User, path: "/profile" },
-      { name: "Neural Message", icon: MessageSquare, path: "/messages" },
     ],
     student: [
       { name: "Quantum Hub", icon: LayoutDashboard, path: "/" },
@@ -74,101 +76,171 @@ const Sidebar = () => {
       { name: "Presence Matrix", icon: ClipboardCheck, path: "/attendance" },
       { name: "Profile Node", icon: User, path: "/profile" },
       { name: "Finance Vault", icon: CreditCard, path: "/fees" },
-      { name: "Impact Log", icon: Award, path: "/results" },
     ]
   };
 
   const menuItems = navigation[role as keyof typeof navigation] || navigation.admin;
 
+  if (!mounted) return null;
+
   return (
     <motion.aside
-      initial={false}
+      initial={{ x: -100, opacity: 0 }}
       animate={{ 
-        width: isCollapsed ? "120px" : "340px",
-        x: 0 
+        x: 0, 
+        opacity: 1,
+        width: isCollapsed ? "110px" : "320px",
       }}
-      className="fixed left-8 top-8 bottom-8 z-50 glass-panel !rounded-[3rem] border-white/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
+      transition={{ type: "spring", damping: 20, stiffness: 100 }}
+      className="fixed left-6 top-6 bottom-6 z-50 glass-panel !rounded-[28px] border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden perspective-1200"
     >
-      {/* Branding Node */}
-      <div className="p-10 flex items-center gap-5">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-start via-primary-middle to-primary-end p-[2px] shadow-2xl shadow-primary-start/40 flex-shrink-0 relative group overflow-hidden">
-           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-           <div className="w-full h-full bg-[#0A0F1F] rounded-[14px] flex items-center justify-center font-black text-xl text-white">
-            N
+      <div className="glow-sidebar-ambient" />
+
+      {/* Floating Particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(6)].map((_, i) => (
+          <div 
+            key={i} 
+            className="particle w-1 h-1" 
+            style={{ 
+              top: `${Math.random() * 100}%`, 
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`
+            }} 
+          />
+        ))}
+      </div>
+
+      {/* Logo Block */}
+      <div className={`p-8 flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} relative z-10`}>
+        <div className="relative w-12 h-12 flex-shrink-0 group">
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary-start to-primary-end rounded-xl opacity-20 blur-lg group-hover:opacity-40 transition-opacity" />
+          <div className="w-full h-full rounded-xl rotate-border-container p-[2px]">
+            <div className="w-full h-full bg-[#020617] rounded-[10px] flex items-center justify-center relative z-10 transition-transform group-hover:scale-95">
+              <span className="font-black text-xl text-white">N</span>
+            </div>
           </div>
         </div>
         {!isCollapsed && (
           <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-             <h1 className="text-2xl font-black tracking-tighter text-white">NEXUS<span className="text-primary-middle">CORE</span></h1>
-             <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1.5 leading-none">Quantum ERP v2.0</p>
+            <h1 className="text-xl font-black tracking-tight gradient-text-animated">NEXUSCORE</h1>
+            <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em] leading-none mt-1">Quantum ERP System</p>
           </motion.div>
         )}
       </div>
 
       {/* Navigation Cluster */}
-      <nav className="flex-1 px-5 space-y-3 mt-4 overflow-y-auto no-scrollbar">
+      <nav className="flex-1 px-4 space-y-2 mt-6 overflow-y-auto no-scrollbar relative z-10">
         {!isCollapsed && (
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-6 ml-5 opacity-40">System Overlays</p>
+          <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.5em] mb-4 ml-6 opacity-40">Main Matrix</p>
         )}
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
           const Icon = item.icon;
           
           return (
-            <Link
-              key={item.name}
-              href={item.path}
-              className={`flex items-center gap-5 px-6 py-5 rounded-[2rem] transition-all duration-500 group relative overflow-hidden mb-1 ${
-                isActive
-                  ? "bg-white/5 text-white shadow-2xl shadow-black/20 border border-white/5"
-                  : "text-slate-500 hover:text-white hover:bg-white/[0.03]"
-              }`}
-            >
-              {isActive && (
-                <motion.div 
-                  layoutId="active-nav-glow"
-                  className="absolute left-0 w-1.5 h-8 bg-indigo-500 rounded-r-full shadow-[0_0_15px_#6366f1]"
-                />
-              )}
-              <Icon className={`w-6 h-6 min-w-[24px] transition-all duration-500 ${isActive ? "text-indigo-400 translate-x-1 glow-primary" : "group-hover:scale-110 group-hover:text-slate-300"}`} />
-              {!isCollapsed && (
-                <span className={`font-black text-[13px] tracking-tighter uppercase transition-all ${isActive ? "translate-x-1" : "group-hover:translate-x-1"}`}>
-                  {item.name}
-                </span>
-              )}
-              {isActive && !isCollapsed && (
-                 <div className="ml-auto w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1] animate-pulse" />
-              )}
+            <Link key={item.name} href={item.path}>
+              <motion.div
+                whileHover={{ scale: 1.02, x: 5 }}
+                whileTap={{ scale: 0.98 }}
+                className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group relative overflow-hidden mb-1 ${
+                  isActive
+                    ? "sidebar-item-glass shadow-[0_0_20px_rgba(59,130,246,0.1)] border border-white/10"
+                    : "text-slate-500 hover:text-white"
+                }`}
+              >
+                {isActive && (
+                  <motion.div 
+                    layoutId="active-pill"
+                    className="absolute inset-0 bg-gradient-to-r from-primary-start/20 via-primary-middle/10 to-transparent animate-liquid -z-10"
+                  />
+                )}
+                <div className="relative">
+                   <Icon className={`w-5 h-5 transition-all duration-300 ${isActive ? "text-primary-start glow-primary scale-110" : "group-hover:text-white group-hover:scale-110"}`} />
+                   {isActive && (
+                     <motion.div 
+                       layoutId="icon-glow"
+                       className="absolute inset-x-0 -bottom-1 h-0.5 bg-primary-start blur-sm"
+                     />
+                   )}
+                </div>
+                {!isCollapsed && (
+                  <span className={`font-bold text-[13px] tracking-tight transition-all ${isActive ? "text-white" : "group-hover:text-white"}`}>
+                    {item.name}
+                  </span>
+                )}
+                {isActive && !isCollapsed && (
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-start shadow-[0_0_10px_#3b82f6] animate-pulse" 
+                  />
+                )}
+              </motion.div>
             </Link>
           );
         })}
       </nav>
 
-      {/* System Core Footer */}
-      <div className="p-8 mt-auto border-t border-white/5 space-y-4 bg-white/[0.01]">
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center justify-center lg:justify-start gap-4 px-6 py-5 rounded-3xl text-slate-500 hover:bg-white/5 hover:text-white transition-all group border border-transparent hover:border-white/5"
-        >
-          <div className="p-1 rounded-lg group-hover:rotate-12 transition-transform">
-            {theme === "light" ? <Moon className="w-6 h-6" /> : <Sun className="w-6 h-6 text-amber-500" />}
+      {/* Bottom Control Panel */}
+      <div className="p-4 mt-auto space-y-4 relative z-10 border-t border-white/5 bg-white/[0.01]">
+        {/* Profile Mini Card */}
+        {!isCollapsed ? (
+          <motion.div 
+            whileHover={{ y: -5, backgroundColor: "rgba(255,255,255,0.05)" }}
+            className="sidebar-item-glass p-4 rounded-[22px] border border-white/5 cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+               <div className="relative w-10 h-10 rounded-xl overflow-hidden p-[1px] bg-gradient-to-tr from-primary-start to-primary-end">
+                  <div className="w-full h-full bg-[#0A0F1F] rounded-xl flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=10&w=64" className="w-full h-full object-cover rounded-xl opacity-80 group-hover:opacity-100 transition-opacity" alt="Avatar" />
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 border-2 border-[#0A0F1F] rounded-full">
+                    <div className="status-pulse-dot" />
+                  </div>
+               </div>
+               <div className="overflow-hidden">
+                  <p className="text-xs font-black text-white truncate">Nitin Kumar</p>
+                  <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Admin Node</p>
+               </div>
+               <MoreVertical className="w-4 h-4 ml-auto text-slate-600 group-hover:text-white" />
+            </div>
+          </motion.div>
+        ) : (
+          <div className="flex justify-center">
+             <div className="w-10 h-10 rounded-xl bg-primary-start/10 border border-primary-start/20 flex items-center justify-center">
+                <User className="w-5 h-5 text-primary-start" />
+             </div>
           </div>
-          {!isCollapsed && <span className="font-black text-[11px] uppercase tracking-widest">{theme === "light" ? "Night Core" : "Light Aura"}</span>}
-        </button>
-        
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="w-full py-5 flex items-center justify-center gap-4 bg-white/5 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-white group"
-        >
-          {isCollapsed ? (
-            <Zap className="w-5 h-5 text-indigo-500 animate-pulse" />
-          ) : (
-            <>
-              <Command className="w-4 h-4 group-hover:rotate-180 transition-transform duration-700" />
-              <span>Toggle Interface</span>
-            </>
-          )}
-        </button>
+        )}
+
+        <div className={`flex items-center ${isCollapsed ? 'flex-col gap-4' : 'justify-between px-2'} gap-2`}>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleTheme}
+            className="p-3 rounded-xl hover:bg-white/5 transition-colors relative"
+          >
+            {theme === "light" ? <Moon className="w-5 h-5 text-indigo-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.1, rotate: 45 }}
+            whileTap={{ scale: 0.9 }}
+            className="p-3 rounded-xl hover:bg-white/5 transition-colors"
+          >
+            <Settings className="w-5 h-5 text-slate-500 hover:text-white" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={`p-3 rounded-xl border border-white/10 ${isCollapsed ? 'bg-primary-start/20' : 'bg-white/5'} transition-all`}
+          >
+            {isCollapsed ? <Zap className="w-5 h-5 text-primary-start animate-pulse" /> : <Command className="w-5 h-5 text-slate-500" />}
+          </motion.button>
+        </div>
       </div>
     </motion.aside>
   );

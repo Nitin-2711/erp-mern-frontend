@@ -16,7 +16,7 @@ const Navbar = () => {
   return (
     <>
       <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
-      <header className="h-28 px-12 flex items-center justify-between sticky top-0 z-40 backdrop-blur-3xl bg-background/20 border-b border-white/5">
+      <header className="h-28 px-12 flex items-center justify-between sticky top-0 z-40 glass-panel !border-none !bg-background/40 backdrop-blur-3xl shadow-none">
         {/* Smart Search / Command Palette Trigger */}
         <div 
           onClick={() => setIsCommandOpen(true)}

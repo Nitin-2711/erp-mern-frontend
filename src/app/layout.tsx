@@ -34,14 +34,13 @@ export default function RootLayout({
               </div>
 
               <Sidebar />
-              <main className="min-h-screen transition-all duration-700 flex flex-col items-stretch">
-                <div className="flex-1 flex flex-col ml-0 lg:ml-[320px] transition-all duration-700">
-                  <Navbar />
-                  <div className="p-8 md:p-12 max-w-[1800px] w-full mx-auto scale-up-fade">
-                    {children}
-                  </div>
-                </div>
-              </main>
+              {/* Main Content Area Container */}
+              <div className="min-h-screen transition-all duration-700 flex flex-col items-stretch ml-0 lg:ml-[360px] relative z-10 transition-all duration-700">
+                <Navbar />
+                <main className="flex-1 p-6 md:p-10 lg:p-16 max-w-[1800px] w-full mx-auto relative z-10 scale-up-fade">
+                  {children}
+                </main>
+              </div>
             </ToastProvider>
           </RoleProvider>
         </ThemeProvider>

@@ -1,262 +1,190 @@
-"use client";
-
 import { motion } from "framer-motion";
+import { cn } from "@/utils";
 import { 
   Users, 
   BookOpen, 
-  ClipboardCheck, 
-  Edit, 
-  BarChart3, 
-  Building, 
-  Activity, 
+  CheckCircle, 
+  Clock, 
   Shield, 
   Zap, 
-  Wallet,
-  TrendingUp,
+  GraduationCap, 
+  Command,
+  LayoutDashboard,
+  Database,
   Calendar,
-  CheckCircle2,
-  Clock,
-  ArrowUpRight,
-  MoreHorizontal
+  MessageSquare,
+  FileText,
+  TrendingUp,
+  Briefcase
 } from "lucide-react";
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
-};
-
-const GlassCard = ({ children, className }: any) => (
-  <motion.div
-    variants={item}
-    className={`glass-panel rounded-[2.5rem] p-8 border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group ${className}`}
-  >
-    {children}
-  </motion.div>
-);
-
-const StatCard = ({ title, value, icon: Icon, color, spark }: any) => (
-  <GlassCard>
-    <div className={`w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10 ${color}`}>
-      <Icon className="w-6 h-6" />
-    </div>
-    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[.3rem] mb-1">{title}</p>
-    <h4 className="text-3xl font-black tracking-tighter">{value}</h4>
-    <div className="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-        <motion.div initial={{ width: 0 }} animate={{ width: spark }} className={`h-full ${color.replace('text-', 'bg-')} rounded-full`} />
-    </div>
-  </GlassCard>
-);
+import { KPICard, DepartmentInsight, ActivityLog, ActionCard } from "./Dashboard";
 
 export const AdminDashboard = () => (
-  <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-    <StatCard title="Total Revenue" value="$4.2M" icon={Wallet} color="text-blue-500" spark="75%" />
-    <StatCard title="Active Nodes" value="12,450" icon={Users} color="text-emerald-500" spark="92%" />
-    <StatCard title="System Load" value="24%" icon={Activity} color="text-amber-500" spark="24%" />
-    <StatCard title="Core Security" value="ELITE" icon={Shield} color="text-purple-500" spark="100%" />
-    
-    <GlassCard className="lg:col-span-3">
-        <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-black tracking-tight flex items-center gap-3">
-                <BarChart3 className="w-6 h-6 text-blue-500" /> Enterprise Analytics
-            </h3>
-            <button className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">View Detailed Matrix</button>
+  <div className="space-y-12">
+    {/* KPI Row - Fully Interactive */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <KPICard title="Total Students" value="12,450" icon={Users} trend={{ value: 5.2, isPositive: true }} color="indigo" href="/dashboard/users" />
+      <KPICard title="Faculty Members" value="482" icon={GraduationCap} trend={{ value: 1.2, isPositive: true }} color="blue" href="/dashboard/faculty" />
+      <KPICard title="Active courses" value="84" icon={BookOpen} trend={{ value: 0.8, isPositive: false }} color="emerald" href="/dashboard/subjects" />
+      <KPICard title="System Matrix" value="94%" icon={Zap} trend={{ value: 2.1, isPositive: true }} color="amber" href="/dashboard/reports" />
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      {/* Analytics Main */}
+      <div className="lg:col-span-2 space-y-10">
+        <DepartmentInsight 
+          departments={[
+            { name: "Computer Science", students: 4500, total: 5000, color: "bg-indigo-500" },
+            { name: "Mechanical Engineering", students: 2800, total: 4000, color: "bg-blue-500" },
+            { name: "Information Technology", students: 3200, total: 3500, color: "bg-emerald-500" },
+            { name: "Business Admin", students: 1500, total: 2000, color: "bg-amber-500" },
+          ]}
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <ActionCard title="User Access" icon={Users} color="indigo" href="/dashboard/users" />
+          <ActionCard title="Grant Clearance" icon={Shield} color="rose" href="/dashboard/profile" />
+          <ActionCard title="Audit Matrix" icon={Database} color="emerald" href="/dashboard/reports" />
         </div>
-        <div className="h-64 flex items-end gap-3 pb-4">
-            {[40, 70, 45, 90, 65, 80, 50, 95, 85, 60, 75, 55, 90].map((h, i) => (
-                <motion.div 
-                    key={i} 
-                    initial={{ height: 0 }} 
-                    animate={{ height: `${h}%` }} 
-                    className="flex-1 bg-blue-500/20 hover:bg-blue-500/40 rounded-t-xl transition-all"
-                />
-            ))}
-        </div>
-    </GlassCard>
-    
-    <GlassCard className="bg-blue-500/5 border-blue-500/10">
-        <Zap className="w-8 h-8 text-blue-500 mb-6" />
-        <h4 className="text-lg font-black tracking-tight">Rapid Provisioning</h4>
-        <p className="text-xs font-bold text-slate-500 mt-2 leading-relaxed uppercase tracking-wider opacity-60">Ready to deploy 500 new identity shards.</p>
-        <button className="mt-8 w-full py-3 bg-blue-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20">Execute</button>
-    </GlassCard>
-  </motion.div>
+      </div>
+
+      {/* Sidebar Analytics */}
+      <div className="space-y-8">
+        <ActivityLog 
+          activities={[
+            { id: '1', type: 'SYSTEM', title: 'Security scan complete', time: '12m ago', status: 'All nodes secure' },
+            { id: '2', type: 'ATTENDANCE', title: 'CS-DEPT Batch-A updated', time: '45m ago', status: 'Marked by Dr. Smith' },
+            { id: '3', type: 'ACADEMIC', title: 'New course: AI Ethics', time: '2h ago', status: 'Pending HOD approval' },
+          ]}
+        />
+      </div>
+    </div>
+  </div>
 );
 
 export const HODDashboard = () => (
-  <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <StatCard title="Faculty Count" value="48" icon={Users} color="text-blue-500" spark="100%" />
-        <StatCard title="Dept Load" value="84%" icon={BarChart3} color="text-emerald-500" spark="84%" />
-        <StatCard title="Pending Approvals" value="12" icon={ClipboardCheck} color="text-amber-500" spark="40%" />
+  <div className="space-y-12">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <KPICard title="Dept Students" value="2,480" icon={Users} color="indigo" href="/dashboard/users" />
+      <KPICard title="Total Faculty" value="84" icon={GraduationCap} color="blue" href="/dashboard/faculty" />
+      <KPICard title="Attendance Index" value="92.4%" icon={CheckCircle} color="emerald" href="/dashboard/attendance" />
     </div>
-    
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <GlassCard>
-            <h3 className="text-xl font-black tracking-tight mb-8">Faculty Matrix</h3>
-            <div className="space-y-4">
-                {[
-                    { name: "Dr. Elena Vance", role: "Sr. Research", status: "Active" },
-                    { name: "Prof. Isaac Kleiner", role: "Theoretical Ops", status: "In Hub" },
-                ].map((f, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center font-black text-blue-500">{f.name[0]}</div>
-                            <div>
-                                <p className="font-black text-sm uppercase">{f.name}</p>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{f.role}</p>
-                            </div>
-                        </div>
-                        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest px-3 py-1 bg-emerald-500/10 rounded-lg">{f.status}</span>
-                    </div>
-                ))}
-            </div>
-        </GlassCard>
-        
-        <GlassCard>
-            <h3 className="text-xl font-black tracking-tight mb-8">Approval Queue</h3>
-            <div className="space-y-4">
-                {[
-                    { type: "Grant Requisition", from: "Dept Bio-Ops", id: "#772" },
-                    { type: "Faculty Leave Node", from: "Quantum Physics", id: "#901" },
-                ].map((a, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 rounded-3xl bg-white/5 border border-white/5 transition-all">
-                        <div>
-                            <p className="font-black text-sm uppercase">{a.type}</p>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{a.from} • {a.id}</p>
-                        </div>
-                        <div className="flex gap-2">
-                            <button className="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500 transition-all"><CheckCircle2 className="w-4 h-4" /></button>
-                            <button className="p-3 bg-rose-500/10 text-rose-500 rounded-xl hover:bg-rose-500 transition-all"><MoreHorizontal className="w-4 h-4" /></button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </GlassCard>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+       <div className="lg:col-span-2 space-y-10">
+          <DepartmentInsight 
+            departments={[
+              { name: "First Year B.Tech", students: 800, total: 850, color: "bg-indigo-500" },
+              { name: "Second Year B.Tech", students: 720, total: 800, color: "bg-blue-500" },
+            ]}
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <ActionCard title="Course Allocation" icon={BookOpen} color="indigo" href="/dashboard/subjects" />
+            <ActionCard title="Approve Leaves" icon={FileText} color="rose" href="/dashboard/profile" />
+          </div>
+       </div>
+        <ActivityLog 
+          activities={[
+            { id: '1', type: 'ACADEMIC', title: 'Syllabus revised: PHY-102', time: '1h ago', status: 'Approved' },
+            { id: '2', type: 'ATTENDANCE', title: 'Low attendance alert', time: '3h ago', status: 'Batch B-04' },
+          ]}
+        />
     </div>
-  </motion.div>
+  </div>
 );
 
 export const FacultyDashboard = () => (
-  <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
-     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <GlassCard className="lg:col-span-2">
-            <h3 className="text-xl font-black tracking-tight mb-8 flex items-center gap-3">
-                <Calendar className="w-6 h-6 text-blue-500" /> Mission Timeline
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                    { time: "09:00 AM", class: "Quantum Physics II", students: "42 Nodes", active: true },
-                    { time: "11:30 AM", class: "Neural Networks Lab", students: "28 Nodes", active: false },
-                ].map((c, i) => (
-                    <div key={i} className={`p-6 rounded-[2rem] border transition-all ${c.active ? "bg-blue-500/10 border-blue-500/30 shadow-xl shadow-blue-500/10" : "bg-white/5 border-white/10 opacity-60"}`}>
-                        <div className="flex justify-between items-start mb-4">
-                            <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-3 py-1 rounded-lg">{c.time}</span>
-                            {c.active && <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />}
-                        </div>
-                        <h4 className="font-black text-lg uppercase tracking-tight">{c.class}</h4>
-                        <p className="text-[10px] font-bold text-slate-500 mt-2 uppercase tracking-[0.2em]">{c.students} Connected</p>
+  <div className="space-y-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <KPICard title="Today's Classes" value="04" icon={Calendar} color="indigo" href="/dashboard/timetable" />
+      <KPICard title="Avg Attendance" value="88%" icon={CheckCircle} color="emerald" href="/dashboard/attendance" />
+      <KPICard title="Tasks" value="12" icon={Clock} color="amber" href="/dashboard" />
+      <KPICard title="Students" value="480" icon={Users} color="blue" href="/dashboard/users" />
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="lg:col-span-2 bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-[3rem] p-8 border border-slate-100 dark:border-white/5 shadow-sm">
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-10 uppercase tracking-tighter">Timeline Strategy</h3>
+          <div className="space-y-6">
+             {[
+               { time: "09:00 AM", class: "Quantum Physics Lab", room: "L-204", status: "Completed" },
+               { time: "11:30 AM", class: "Solid State Devices", room: "A-102", status: "Ongoing" },
+               { time: "02:00 PM", class: "Faculty Sync Meeting", room: "Conf Hall", status: "Upcoming" },
+             ].map((c, i) => (
+                <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-white/5 hover:bg-white hover:shadow-2xl hover:shadow-indigo-500/10 dark:hover:bg-slate-800 transition-all border border-slate-100 dark:border-white/5 group cursor-pointer">
+                    <div className="flex items-center gap-6">
+                       <div className="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10 transition-all group-hover:scale-110">
+                         <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 tracking-widest uppercase">{c.time}</span>
+                       </div>
+                       <div>
+                          <p className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{c.class}</p>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest opacity-60 leading-none mt-1">{c.room}</p>
+                       </div>
                     </div>
-                ))}
-            </div>
-        </GlassCard>
-        
-        <GlassCard className="bg-emerald-500/5 border-emerald-500/10">
-            <Edit className="w-8 h-8 text-emerald-500 mb-6" />
-            <h4 className="text-xl font-black tracking-tight">Ledger Operations</h4>
-            <p className="text-xs font-bold text-slate-500 mt-4 leading-relaxed uppercase tracking-widest">Verify and upload internal assessment shards for SEM-04 batch.</p>
-            <button className="mt-8 w-full py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20">Launch Ledger Matrix</button>
-        </GlassCard>
-     </div>
-  </motion.div>
+                    <span className={cn(
+                      "text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-xl border transition-all duration-500",
+                      c.status === 'Completed' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : c.status === 'Ongoing' ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20" : "bg-slate-100 text-slate-400 border-transparent"
+                    )}>{c.status}</span>
+                </div>
+             ))}
+          </div>
+      </div>
+      <div className="grid grid-cols-1 gap-6">
+          <ActionCard title="Mark Roll Call" icon={CheckCircle} color="indigo" href="/dashboard/attendance" />
+          <ActionCard title="Broadcast Notice" icon={MessageSquare} color="amber" href="/dashboard" />
+          <ActionCard title="Upload Grades" icon={TrendingUp} color="emerald" href="/dashboard/results" />
+      </div>
+    </div>
+  </div>
 );
 
 export const StudentDashboard = () => (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <GlassCard className="lg:col-span-2 bg-gradient-to-br from-blue-500/5 to-transparent">
-            <div className="flex justify-between items-start mb-10">
-                <div className="w-14 h-14 rounded-3xl bg-blue-500/10 flex items-center justify-center border border-blue-500/10">
-                    <TrendingUp className="w-7 h-7 text-blue-500" />
-                </div>
-                <div className="text-right">
-                    <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Global CGPA</p>
-                    <h3 className="text-5xl font-black tracking-tighter mt-1">9.24</h3>
-                </div>
-            </div>
-            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden mb-4">
-                <motion.div initial={{ width: 0 }} animate={{ width: "92.4%" }} className="h-full bg-blue-500 rounded-full shadow-[0_0_20px_#3b82f6]" />
-            </div>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Performance Alpha Stage Verified</p>
-        </GlassCard>
-        
-        <GlassCard>
-            <Clock className="w-8 h-8 text-blue-400 mb-6" />
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Presence Logic</p>
-            <h4 className="text-4xl font-black tracking-tighter">88.4%</h4>
-            <div className="mt-6 flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-                <CheckCircle2 className="w-4 h-4" /> Threshold Met
-            </div>
-        </GlassCard>
-        
-        <GlassCard>
-            <Wallet className="w-8 h-8 text-amber-500 mb-6" />
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Financial Shard</p>
-            <h4 className="text-3xl font-black tracking-tighter">$1,240</h4>
-            <div className="mt-6 flex items-center gap-2 text-[10px] font-black text-rose-500 uppercase tracking-widest">
-                <Clock className="w-4 h-4" /> Due in 48h
-            </div>
-        </GlassCard>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-         <GlassCard className="lg:col-span-2">
-            <h3 className="text-xl font-black tracking-tight mb-8">Subject Index</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="space-y-12">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <KPICard title="CGPA Index" value="9.24" icon={GraduationCap} color="indigo" href="/dashboard/results" />
+      <KPICard title="Attendance" value="88.4%" icon={CheckCircle} color="emerald" href="/dashboard/attendance" />
+      <KPICard title="Dues Matrix" value="$1,240" icon={Briefcase} color="rose" href="/dashboard/fees" />
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="lg:col-span-2 space-y-10">
+          <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-[3rem] p-10 border border-slate-100 dark:border-white/5 shadow-sm">
+             <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-10 uppercase tracking-tighter">Academic Shards</h3>
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                 {[
-                    { name: "Quantum Mechanics", code: "PH-401", score: "A+" },
-                    { name: "Neural Cryptography", code: "CS-402", score: "A" },
-                    { name: "Advanced Robotics", code: "ME-405", score: "A-" },
-                    { name: "Bio-Synthetic Core", code: "BT-409", score: "B+" },
+                  { name: "Mechanics of Solid", score: "A+", progress: 95 },
+                  { name: "Thermodynamics", score: "A", progress: 88 },
+                  { name: "Mathematics IV", score: "B+", progress: 78 },
+                  { name: "Logic Architecture", score: "A-", progress: 84 },
                 ].map((s, i) => (
-                    <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all cursor-pointer group">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center font-black text-[10px] text-blue-500 border border-blue-500/10 group-hover:bg-blue-500 transition-all group-hover:text-white">{s.code[0]}</div>
-                            <div>
-                                <p className="font-black text-sm uppercase">{s.name}</p>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{s.code}</p>
-                            </div>
-                        </div>
-                        <span className="font-black text-blue-500">{s.score}</span>
-                    </div>
+                  <div key={i} className="space-y-4 group cursor-pointer">
+                     <div className="flex justify-between items-end">
+                        <span className="text-[11px] font-black text-slate-500 group-hover:text-indigo-500 transition-colors uppercase">{s.name}</span>
+                        <span className="text-base font-black text-indigo-600">{s.score}</span>
+                     </div>
+                     <div className="h-2 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden p-[1px]">
+                        <motion.div 
+                          initial={{ width: 0 }} 
+                          animate={{ width: `${s.progress}%` }} 
+                          className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full shadow-[0_0_10px_rgba(79,70,229,0.4)]" 
+                        />
+                     </div>
+                  </div>
                 ))}
-            </div>
-         </GlassCard>
-         
-         <GlassCard>
-            <h3 className="text-xl font-black tracking-tight mb-8">Notice Cluster</h3>
-            <div className="space-y-6">
-                {[
-                    { title: "Exam Portal Open", type: "Security", time: "2h ago" },
-                    { title: "Event Log Updated", type: "Social", time: "5h ago" },
-                    { title: "Library Sync Done", type: "Files", time: "1d ago" },
-                ].map((n, i) => (
-                    <div key={i} className="group cursor-pointer">
-                        <div className="flex justify-between items-center mb-1">
-                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">{n.type}</span>
-                            <span className="text-[9px] font-black text-slate-600 uppercase transition-all group-hover:text-slate-400">{n.time}</span>
-                        </div>
-                        <p className="font-bold text-sm text-slate-200 group-hover:text-blue-400 transition-all uppercase tracking-tight">{n.title}</p>
-                        {i < 2 && <div className="mt-4 h-[1px] w-full bg-white/5" />}
-                    </div>
-                ))}
-            </div>
-            <button className="w-full mt-10 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Clear Stream</button>
-         </GlassCard>
+             </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <ActionCard title="Timetable" icon={Calendar} color="indigo" href="/dashboard/timetable" />
+              <ActionCard title="Quick Messages" icon={MessageSquare} color="blue" href="/dashboard" />
+              <ActionCard title="Exam Portal" icon={TrendingUp} color="emerald" href="/dashboard/results" />
+          </div>
       </div>
-    </motion.div>
+      <ActivityLog 
+          activities={[
+            { id: '1', type: 'ACADEMIC', title: 'Result Published', time: '1d ago', status: 'SEM-04 Lab' },
+            { id: '2', type: 'SYSTEM', title: 'Profile verified', time: '2d ago', status: 'Registrar active' },
+          ]}
+        />
+    </div>
+  </div>
 );

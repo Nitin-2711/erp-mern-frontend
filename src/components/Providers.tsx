@@ -7,19 +7,7 @@ import { useUIStore } from '@/store';
 import { useEffect } from 'react';
 import { RoleProvider } from '@/context/RoleContext';
 
-const muiTheme = createTheme({
-  palette: {
-    primary: { main: '#6366f1' }, // Indigo 500
-    secondary: { main: '#3b82f6' }, // Blue 500
-    mode: 'light', // Default, will change via store
-  },
-  typography: {
-    fontFamily: '"Inter", "SF Pro Display", sans-serif',
-  },
-  shape: {
-    borderRadius: 12,
-  },
-});
+import { useMemo } from 'react';
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -34,16 +22,53 @@ export default function Providers({ children }: { children: ReactNode }) {
       })
   );
 
-  const { theme, setTheme } = useUIStore();
+  const { theme } = useUIStore();
 
   useEffect(() => {
     const root = window.document.documentElement;
+    
+    const updateTheme = () => {
+      const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      root.classList.toggle('dark', isDark);
+      root.style.colorScheme = isDark ? 'dark' : 'light';
+    };
+
+    updateTheme();
+
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      root.classList.toggle('dark', systemTheme === 'dark');
-    } else {
-      root.classList.toggle('dark', theme === 'dark');
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => updateTheme();
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
     }
+  }, [theme]);
+
+  const muiTheme = useMemo(() => {
+    // Determine effective mode for MUI
+    let effectiveMode: 'light' | 'dark' = 'light';
+    if (theme === 'dark') {
+      effectiveMode = 'dark';
+    } else if (theme === 'system' && typeof window !== 'undefined') {
+      effectiveMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    return createTheme({
+      palette: {
+        mode: effectiveMode,
+        primary: { main: '#6366f1' },
+        secondary: { main: '#3b82f6' },
+        background: {
+          default: effectiveMode === 'dark' ? '#020617' : '#f8fafc',
+          paper: effectiveMode === 'dark' ? '#0f172a' : '#ffffff',
+        },
+      },
+      typography: {
+        fontFamily: '"Outfit", "Inter", sans-serif',
+      },
+      shape: {
+        borderRadius: 16,
+      },
+    });
   }, [theme]);
 
   return (

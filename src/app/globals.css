@@ -12,29 +12,31 @@
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f8fbff; /* Stunning Azure/Blue-White background */
+  --foreground: #020617;
   --card: #ffffff;
-  --card-foreground: #0f172a;
-  --border: #e2e8f0;
-  --ring: #3b82f6;
-  --glow: rgba(59, 130, 246, 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  --card-foreground: #1e293b;
+  --border: rgba(99, 102, 241, 0.1); /* Subtle Indigo borders */
+  --ring: #6366f1;
+  --glow: rgba(99, 102, 241, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.5);
-  --selection: #bfdbfe;
+  --selection: #e0f2fe;
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); /* Pure Blue-Indigo gradient */
 }
 
 .dark {
   --background: #020617; /* Very deep navy */
-  --foreground: #f8fafc;
+  --foreground: #f1f5f9;
   --card: #0f172a;
-  --card-foreground: #f8fafc;
-  --border: #1e293b;
-  --ring: #3b82f6;
-  --glow: rgba(59, 130, 246, 0.2);
-  --glass-bg: rgba(15, 23, 42, 0.6);
+  --card-foreground: #f1f5f9;
+  --border: rgba(30, 41, 59, 0.5);
+  --ring: #6366f1;
+  --glow: rgba(79, 70, 229, 0.25);
+  --glass-bg: rgba(15, 23, 42, 0.75);
   --glass-border: rgba(255, 255, 255, 0.05);
   --selection: #1e40af;
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
 }
 
 body {

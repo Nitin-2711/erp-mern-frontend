@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '@/shared/components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useUIStore } from '@/store';
+import { useAuthStore, useUIStore } from '@/store';
 import { Bell, Search, Command, Moon, Sun, Navigation } from 'lucide-react';
 import { cn } from '@/utils';
 import { useRole } from '@/context/RoleContext';
@@ -93,12 +93,23 @@ const CommandPalette = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { sidebarOpen, toggleSidebar, theme, setTheme } = useUIStore();
-  const { role } = useRole();
+  const { user, isAuthenticated } = useAuthStore();
+  const { role, setRole } = useRole();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Matrix Auth Guard logic
+    if (!isAuthenticated) {
+      router.push('/login');
+    } else if (user) {
+      // Sync local role context with real user role
+      setRole(user.role.toLowerCase() as any);
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
@@ -107,9 +118,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isAuthenticated, router, user, setRole]);
 
-  if (!mounted) return (
+  if (!mounted || !user) return (
     <div className="flex h-screen bg-slate-50 dark:bg-[#020617] animate-pulse" />
   );
 
@@ -188,10 +199,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-4 cursor-pointer group">
               <div className="hidden sm:flex flex-col items-end text-right">
                 <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest leading-none mb-1 px-2 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100/50">{role}</span>
-                <span className="text-sm font-black text-[var(--foreground)] uppercase tracking-tight group-hover:text-indigo-600 transition-colors">Nitin Kumar</span>
+                <span className="text-sm font-black text-[var(--foreground)] uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{user.name}</span>
               </div>
               <div className="w-12 h-12 rounded-2xl bg-[var(--accent-gradient)] p-[2px] shadow-xl shadow-indigo-500/10 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
-                <div className="w-full h-full rounded-[14px] bg-slate-900 dark:bg-slate-900 flex items-center justify-center text-[13px] text-white font-black">NK</div>
+                <div className="w-full h-full rounded-[14px] bg-slate-900 dark:bg-slate-900 flex items-center justify-center text-[13px] text-white font-black">
+                  {user.name.split(' ').map(n => n[0]).join('')}
+                </div>
               </div>
             </div>
           </div>

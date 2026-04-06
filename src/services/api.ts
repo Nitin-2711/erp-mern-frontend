@@ -1,24 +1,24 @@
-import axios from 'axios';
-import { useAuthStore } from '@/store';
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '@/store/authStore';
 
 /**
- * @description Enterprise Axios Instance Configuration for 80,000 node ERP.
- * Configured with baseURL pointing to the v1 Matrix Shard.
+ * Enterprise Axios Instance Configuration for 80,000+ Node ERP.
+ * Configured with baseURL pointing to the backend API.
  * withCredentials enabled for secure HTTP-Only cookie token rotation.
  */
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1',
-  withCredentials: true, // Mission Critical: Required for Matrix Session Cookies
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor: Syncs accessToken into headers for fallback compatibility
+// Request interceptor: Syncs accessToken into headers
 api.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = useAuthStore.getState().token;
-    if (token) {
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -28,23 +28,26 @@ api.interceptors.request.use(
 
 // Response interceptor: Handles Matrix node failures and session expiry
 api.interceptors.response.use(
-  (response) => response.data, // Automatically extract ApiResponse.data
+  (response) => response.data, 
   async (error) => {
     const originalRequest = error.config;
 
-    // Handle 401: Attempt Matrix Token Rotation if not already retried
+    // Handle 401: Attempt Token Rotation if not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        // Attempt refresh-token call via Matrix Shard
-        const response = await axios.post('http://localhost:8000/api/v1/auth/refresh-token', {}, {
-          withCredentials: true
-        });
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
         
         const { accessToken } = response.data.data;
-        useAuthStore.getState().login(useAuthStore.getState().user!, accessToken);
+        useAuthStore.getState().setToken(accessToken);
         
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        }
         return api(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().logout();
